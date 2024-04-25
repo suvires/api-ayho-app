@@ -2,27 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Rules\ValidRole;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
-class AuthControllerApi extends Controller
+class AuthController extends Controller
 {
-    /**
-     * Create a new AuthControllerApi instance for
-       JWT Authentication In Laravel 11
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('auth:api', ['except' => ['login']]);
-    }
+
 
     public function loginUser()
     {
         $credentials = request(['email', 'password']);
 
-        if (! $token = auth()->attempt($credentials)) {
+        if (!$token = auth()->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
@@ -31,12 +27,21 @@ class AuthControllerApi extends Controller
 
     public function registerUser(Request $request)
     {
-        $request->validate([
+
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8',
-            'role' => 'required|string',
+            'password' => 'required|string|min:6',
+            'role' => ['required', new ValidRole],
         ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation failed',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
 
         $user = User::create([
             'name' => $request->name,
@@ -45,6 +50,8 @@ class AuthControllerApi extends Controller
         ]);
 
         $user->assignRole($request->role);
+
+        $user->load('roles');
 
         $token = Auth::login($user);
         return response()->json([
@@ -59,7 +66,10 @@ class AuthControllerApi extends Controller
     }
     public function meUser()
     {
-        return response()->json(auth()->user());
+        $user = auth()->user();
+        $user->load('roles');
+
+        return response()->json($user);
     }
 
     public function logoutUser()
@@ -73,13 +83,17 @@ class AuthControllerApi extends Controller
     {
         return $this->respondWithToken(auth()->refresh());
     }
-   //main function to create JWT Authentication In Laravel 11
+
     protected function respondWithToken($token)
     {
+        $user = auth()->user();
+        $user->load('roles');
+
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60
+            'expires_in' => auth()->factory()->getTTL() * 60,
+            'user' => $user
         ]);
     }
 }

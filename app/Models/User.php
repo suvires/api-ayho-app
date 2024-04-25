@@ -12,7 +12,6 @@ class User extends Authenticatable implements JWTSubject
     use Notifiable;
     use HasRoles;
 
-
     /**
      * Get the unique identifier for the JWT.
      *
@@ -65,4 +64,5 @@ class User extends Authenticatable implements JWTSubject
             'password' => 'hashed',
         ];
     }
+
 }
