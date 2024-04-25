@@ -17,6 +17,22 @@ Route::middleware('api')->group(function () {
             Route::post('/me', [AuthController::class, 'meUser'])->name('api.auth.me');
         });
     });
+
+    Route::middleware('auth:api')->group(function () {
+        Route::post('offers', 'App\Http\Controllers\OfferController@index');
+        Route::post('companies', 'App\Http\Controllers\CompanyController@index');
+        Route::post('skills', 'App\Http\Controllers\SkillController@index');
+        Route::post('schedules', 'App\Http\Controllers\ScheduleController@index');
+        Route::post('places', 'App\Http\Controllers\PlaceController@index');
+        Route::post('positions', 'App\Http\Controllers\PositionController@index');
+        Route::post('attendances', 'App\Http\Controllers\AttendanceController@index');
+
+        Route::post('offer/like', 'App\Http\Controllers\OfferController@like');
+        Route::post('offer/dislike', 'App\Http\Controllers\OfferController@dislike');
+        Route::post('offer/undo', 'App\Http\Controllers\OfferController@undo');
+        Route::post('get-offers', 'App\Http\Controllers\OfferController@getOffers');
+        Route::post('get-matches', 'App\Http\Controllers\OfferController@getMatches');
+    });
 });
 
 Route::redirect('/', 'https://ayho.app');

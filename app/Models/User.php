@@ -7,10 +7,13 @@ use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
  // class for JWT Authentication In Laravel 11
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 class User extends Authenticatable implements JWTSubject
 {
     use Notifiable;
     use HasRoles;
+    use HasFactory;
 
     /**
      * Get the unique identifier for the JWT.
@@ -64,5 +67,42 @@ class User extends Authenticatable implements JWTSubject
             'password' => 'hashed',
         ];
     }
+    public function offers()
+    {
+        return $this->belongsToMany(Offer::class, 'offer_user')->withTimestamps();
+    }
 
+    public function positions()
+    {
+        return $this->belongsToMany(Position::class, 'user_position')->withTimestamps();
+    }
+
+    public function skills()
+    {
+        return $this->belongsToMany(Skill::class, 'user_skill')->withTimestamps();
+    }
+
+    public function schedules()
+    {
+        return $this->belongsToMany(Schedule::class, 'user_schedule')->withTimestamps();
+    }
+
+    public function places()
+    {
+        return $this->belongsToMany(Place::class, 'user_place')->withTimestamps();
+    }
+
+    public function attendances()
+    {
+        return $this->belongsToMany(Attendance::class, 'user_attendance')->withTimestamps();
+    }
+
+    public function profile()
+    {
+        return $this->hasOne(Profile::class);
+    }
+    public function company()
+    {
+        return $this->hasOne(Company::class);
+    }
 }
