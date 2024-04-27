@@ -53,6 +53,14 @@ class OfferController extends Controller
     {
         $user = Auth::user();
 
+        $user->load('roles');
+        if(!$user->hasRole('Employer')) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized',
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+
         $offers = Offer::where('company_id', $user->company->id)
                 ->get();
 

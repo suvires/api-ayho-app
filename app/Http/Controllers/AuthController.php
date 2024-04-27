@@ -21,6 +21,14 @@ class AuthController extends Controller
         if (!$token = auth()->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
+        //Auth user with credentials
+        $user = auth()->user();
+
+        $role = request(['role']);
+        $user->load('roles');
+        if(!$user->hasRole($role)) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
 
         return $this->respondWithToken($token);
     }
