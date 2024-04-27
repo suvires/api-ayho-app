@@ -11,8 +11,11 @@ class Company extends Model
 
     protected $fillable = [
         'name',
-        'description'
+        'description',
+        'user_id'
     ];
+
+    protected $with = ['offers'];
 
     public function offers(){
         return $this->hasMany('App\Models\Offer');

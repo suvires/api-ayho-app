@@ -7,31 +7,36 @@ use App\Http\Controllers\AuthController;
 Route::middleware('api')->group(function () {
     // Authentication routes for JWT Authentication In Laravel 11
     Route::prefix('auth')->group(function () {
-        Route::post('/login', [AuthController::class, 'loginUser'])->name('api.auth.login');
-        Route::post('/register', [AuthController::class, 'registerUser'])->name('api.auth.register');
+        Route::post('/signin', [AuthController::class, 'loginUser'])->name('api.auth.signin');
+        Route::post('/signup', [AuthController::class, 'registerUser'])->name('api.auth.register');
 
         // Protected routes
         Route::middleware('auth:api')->group(function () {
-            Route::post('/logout', [AuthController::class, 'logoutUser'])->name('api.auth.logout');
+            Route::post('/signout', [AuthController::class, 'logoutUser'])->name('api.auth.signout');
             Route::post('/refresh', [AuthController::class, 'refreshUser'])->name('api.auth.refresh');
-            Route::post('/me', [AuthController::class, 'meUser'])->name('api.auth.me');
+            Route::get('/me', [AuthController::class, 'meUser'])->name('api.auth.me');
         });
     });
 
     Route::middleware('auth:api')->group(function () {
-        Route::post('offers', 'App\Http\Controllers\OfferController@index');
-        Route::post('companies', 'App\Http\Controllers\CompanyController@index');
-        Route::post('skills', 'App\Http\Controllers\SkillController@index');
-        Route::post('schedules', 'App\Http\Controllers\ScheduleController@index');
-        Route::post('places', 'App\Http\Controllers\PlaceController@index');
-        Route::post('positions', 'App\Http\Controllers\PositionController@index');
-        Route::post('attendances', 'App\Http\Controllers\AttendanceController@index');
+        Route::get('offers', 'App\Http\Controllers\OfferController@index');
+        Route::get('companies', 'App\Http\Controllers\CompanyController@index');
+        Route::get('skills', 'App\Http\Controllers\SkillController@index');
+        Route::get('schedules', 'App\Http\Controllers\ScheduleController@index');
+        Route::get('places', 'App\Http\Controllers\PlaceController@index');
+        Route::get('positions', 'App\Http\Controllers\PositionController@index');
+        Route::get('attendances', 'App\Http\Controllers\AttendanceController@index');
 
         Route::post('offer/like', 'App\Http\Controllers\OfferController@like');
         Route::post('offer/dislike', 'App\Http\Controllers\OfferController@dislike');
         Route::post('offer/undo', 'App\Http\Controllers\OfferController@undo');
-        Route::post('get-offers', 'App\Http\Controllers\OfferController@getOffers');
-        Route::post('get-matches', 'App\Http\Controllers\OfferController@getMatches');
+        Route::get('get-offers', 'App\Http\Controllers\OfferController@getOffers');
+        Route::get('get-matches', 'App\Http\Controllers\OfferController@getMatches');
+
+        Route::get('offers/mycompany', 'App\Http\Controllers\OfferController@getMyCompanyOffers');
+
+        Route::post('create-company', 'App\Http\Controllers\CompanyController@create');
+        Route::post('create-offer', 'App\Http\Controllers\OfferController@create');
     });
 });
 

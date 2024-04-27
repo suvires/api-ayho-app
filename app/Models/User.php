@@ -67,6 +67,9 @@ class User extends Authenticatable implements JWTSubject
             'password' => 'hashed',
         ];
     }
+
+    protected $with = ['company'];
+
     public function offers()
     {
         return $this->belongsToMany(Offer::class, 'offer_user')->withTimestamps();

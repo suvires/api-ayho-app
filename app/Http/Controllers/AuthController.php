@@ -51,18 +51,10 @@ class AuthController extends Controller
 
         $user->assignRole($request->role);
 
-        $user->load('roles');
-
-        $token = Auth::login($user);
         return response()->json([
             'status' => 'success',
             'message' => 'User created successfully',
-            'user' => $user,
-            'authorisation' => [
-                'token' => $token,
-                'type' => 'bearer',
-            ]
-        ]);
+        ], 201);
     }
 
     public function meUser()
@@ -90,11 +82,9 @@ class AuthController extends Controller
         $user = auth()->user();
         $user->load('roles');
 
-        return response()->json([
-            'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60,
-            'user' => $user
-        ]);
+        $user->accessToken = $token;
+        $user->expires = auth()->factory()->getTTL() * 60;
+
+        return response()->json($user);
     }
 }

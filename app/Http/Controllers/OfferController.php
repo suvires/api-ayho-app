@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Offer;
 use App\Models\OfferUser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class OfferController extends Controller
@@ -48,6 +49,16 @@ class OfferController extends Controller
         return response()->json(['message' => 'success'],  Response::HTTP_OK);
     }
 
+    public function getMyCompanyOffers()
+    {
+        $user = Auth::user();
+
+        $offers = Offer::where('company_id', $user->company->id)
+                ->get();
+
+        return response()->json($offers,  Response::HTTP_OK);
+    }
+
     public function getMatches()
     {
         $user = Auth::user();
@@ -60,5 +71,40 @@ class OfferController extends Controller
         $matches->load('offer.company');
 
         return response()->json($matches,  Response::HTTP_OK);
+    }
+
+    public function create(Request $request)
+    {
+        $user = auth()->user();
+
+        if(!$user) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized',
+            ], Response::HTTP_UNAUTHORIZED);
+
+        }
+        $user->load('roles');
+        if(!$user->hasRole('Employer')) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized',
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+
+        $offer = new Offer();
+        $offer->title = $request->title;
+        $offer->description = $request->description;
+        $offer->salary = $request->salary;
+        $offer->schedule_id = $request->schedule_id;
+        $offer->attendance_id = $request->attendance_id;
+        $offer->company_id = $user->company->id;
+        $offer->save();
+
+        $offer->places()->sync($request->input('places', []));
+        $offer->positions()->sync($request->input('positions', []));
+        $offer->skills()->sync($request->input('skills', []));
+
+        return response()->json($offer, Response::HTTP_CREATED);
     }
 }

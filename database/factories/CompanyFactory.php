@@ -21,7 +21,7 @@ class CompanyFactory extends Factory
         $image_dir = 'public/images/companies';
 
         $path = $this->faker->image(storage_path('app/'.$image_dir), 400, 300, null, false, true, $name);
-        $image_url = URL::to('/') . Storage::url('images/companies/'.$path);
+        $image_url = Storage::url('images/companies/'.$path);
 
         return [
             'name' => $name,
