@@ -11,7 +11,7 @@ class Profile extends Model
 
     protected $fillable = [
         'user_id',
-        'linkedin_url',
+        'linkedin',
         'salary',
         'image_url',
         'image_width',

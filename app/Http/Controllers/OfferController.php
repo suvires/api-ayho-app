@@ -24,6 +24,7 @@ class OfferController extends Controller
             ->whereDoesntHave('users', function ($query) use ($user) {
                 $query->where('users.id', $user->id);
             })
+            ->orderBy('id', 'desc')
             ->get();
 
         return response()->json($offers,  Response::HTTP_OK);
@@ -31,6 +32,15 @@ class OfferController extends Controller
 
     public function like(Request $request){
         $user = Auth::user();
+
+        $user->load('roles');
+        if(!$user->hasRole('Candidate')) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized',
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+
         $user->offers()->syncWithoutDetaching([$request->offer_id => ['liked' => 1]]);
         return response()->json(['message' => 'success'],  Response::HTTP_OK);
     }
@@ -54,7 +64,7 @@ class OfferController extends Controller
         $user = Auth::user();
 
         $user->load('roles');
-        if(!$user->hasRole('Employer')) {
+        if(!$user->hasRole('Recruiter')) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Unauthorized',
@@ -81,6 +91,22 @@ class OfferController extends Controller
         return response()->json($matches,  Response::HTTP_OK);
     }
 
+    public function getMatch(Request $request)
+    {
+        $user = Auth::user();
+
+        $match = OfferUser::where('user_id', $user->id)
+                ->where('liked', true)
+                ->where('id', $request->id)
+                ->where('user_id', $user->id)
+                ->with('offer')
+                ->first();
+
+        $match->load('offer.company');
+
+        return response()->json($match,  Response::HTTP_OK);
+    }
+
     public function create(Request $request)
     {
         $user = auth()->user();
@@ -93,7 +119,7 @@ class OfferController extends Controller
 
         }
         $user->load('roles');
-        if(!$user->hasRole('Employer')) {
+        if(!$user->hasRole('Recruiter')) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Unauthorized',

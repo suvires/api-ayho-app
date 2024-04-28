@@ -68,7 +68,7 @@ class User extends Authenticatable implements JWTSubject
         ];
     }
 
-    protected $with = ['company'];
+    protected $with = ['company', 'profile', 'positions', 'skills', 'schedules', 'places', 'attendances'];
 
     public function offers()
     {

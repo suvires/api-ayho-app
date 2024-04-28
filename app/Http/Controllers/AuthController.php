@@ -9,6 +9,8 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Storage;
 
 class AuthController extends Controller
 {
@@ -31,6 +33,77 @@ class AuthController extends Controller
         }
 
         return $this->respondWithToken($token);
+    }
+
+    public function createProfile(Request $request)
+    {
+        $user = auth()->user();
+        $user->load('roles');
+
+        if(!$user->hasRole('Candidate')) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized',
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+
+        $linkedin = $request->input('linkedin');
+        $salary = $request->input('salary');
+        $positions = json_decode($request->input('positions'));
+        $skills = json_decode($request->input('skills'));
+        $places = json_decode($request->input('places'));
+        $schedules = json_decode($request->input('schedules'));
+        $attendances = json_decode($request->input('attendances'));
+        $image = $request->file('image');
+
+        $validator = Validator::make([
+            'linkedin' => $linkedin,
+            'salary' => $salary,
+            'positions' => $positions,
+            'skills' => $skills,
+            'places' => $places,
+            'schedules' => $schedules,
+            'attendances' => $attendances,
+            //'image' => $image,
+        ], [
+            'linkedin' => 'required|string',
+            'salary' => 'required|numeric|min:1',
+            'positions' => 'required|array|min:1',
+            'skills' => 'required|array|min:1|max:7',
+            'places' => 'required|array|min:1',
+            'schedules' => 'required|array|min:1',
+            'attendances' => 'required|array|min:1',
+            //'image' => 'required|file|mimes:jpg,jpeg,png|max:2048', // Max size 2MB
+        ]);
+
+        // Ejecuta la validación
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $profile = $user->profile()->updateOrCreate([], [
+            'linkedin' => $request->input('linkedin'),
+            'salary' => $request->input('salary'),
+        ]);
+
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
+            $path = $request->file('image')->store('images/users', 'public');
+            $profile->image_url = Storage::url($path);
+            $profile->save();
+        }
+
+        $user->positions()->sync(json_decode($request->input('positions')));
+        $user->skills()->sync(json_decode($request->input('skills')));
+        $user->places()->sync(json_decode($request->input('places')));
+        $user->schedules()->sync(json_decode($request->input('schedules')));
+        $user->attendances()->sync(json_decode($request->input('attendances')));
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Profile updated successfully',
+        ], Response::HTTP_OK);
     }
 
     public function registerUser(Request $request)

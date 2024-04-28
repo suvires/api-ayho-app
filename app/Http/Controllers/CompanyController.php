@@ -27,7 +27,7 @@ class CompanyController extends Controller
 
         }
         $user->load('roles');
-        if(!$user->hasRole('Employer')) {
+        if(!$user->hasRole('Recruiter')) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Unauthorized',
@@ -40,8 +40,8 @@ class CompanyController extends Controller
         $company->user_id = $user->id;
 
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('images/companies', 'public');
-            $company->image_url = Storage::url($imagePath);
+            $path = $request->file('image')->store('images/companies', 'public');
+            $company->image_url = Storage::url($path);
         }
 
         $company->save();

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->bigInteger('salary');
-            $table->string('linkedin_url');
+            $table->string('linkedin');
             $table->string('image_url')->nullable();
             $table->integer('image_width')->nullable();
             $table->integer('image_height')->nullable();

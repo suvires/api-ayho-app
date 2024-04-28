@@ -33,10 +33,14 @@ Route::middleware('api')->group(function () {
         Route::get('get-offers', 'App\Http\Controllers\OfferController@getOffers');
         Route::get('get-matches', 'App\Http\Controllers\OfferController@getMatches');
 
+        Route::get('get-match/{id}', 'App\Http\Controllers\OfferController@getMatch');
+
         Route::get('offers/mycompany', 'App\Http\Controllers\OfferController@getMyCompanyOffers');
 
         Route::post('create-company', 'App\Http\Controllers\CompanyController@create');
         Route::post('create-offer', 'App\Http\Controllers\OfferController@create');
+
+        Route::post('create-profile', 'App\Http\Controllers\AuthController@createProfile');
     });
 });
 

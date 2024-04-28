@@ -18,6 +18,8 @@ class Offer extends Model
         'schedule_id'
     ];
 
+    protected $with = ['skills', 'positions', 'places', 'schedule', 'attendance'];
+
     public function users()
     {
         return $this->belongsToMany(User::class, 'offer_user')->withTimestamps();
