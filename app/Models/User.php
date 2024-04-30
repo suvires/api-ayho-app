@@ -53,6 +53,9 @@ class User extends Authenticatable implements JWTSubject
     protected $hidden = [
         'password',
         'remember_token',
+        'email_verified_at',
+        'created_at',
+        'updated_at',
     ];
 
     /**
@@ -67,8 +70,6 @@ class User extends Authenticatable implements JWTSubject
             'password' => 'hashed',
         ];
     }
-
-    protected $with = ['company', 'profile', 'positions', 'skills', 'schedules', 'places', 'attendances'];
 
     public function offers()
     {

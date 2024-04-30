@@ -13,12 +13,14 @@ class Offer extends Model
         'title',
         'description',
         'salary',
-        'company_id',
-        'attendance_id',
-        'schedule_id'
+        'company_id'
     ];
 
-    protected $with = ['skills', 'positions', 'places', 'schedule', 'attendance'];
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+        'company_id',
+    ];
 
     public function users()
     {
@@ -41,12 +43,12 @@ class Offer extends Model
         return $this->belongsToMany(Place::class);
     }
 
-    public function schedule(){
-        return $this->belongsTo(Schedule::class);
+    public function schedules(){
+        return $this->belongsToMany(Schedule::class);
     }
 
-    public function attendance(){
-        return $this->belongsTo(attendance::class);
+    public function attendances(){
+        return $this->belongsToMany(Attendance::class, 'offer_attendance');
     }
 
 }

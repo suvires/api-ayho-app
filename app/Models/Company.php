@@ -15,7 +15,11 @@ class Company extends Model
         'user_id'
     ];
 
-    protected $with = ['offers'];
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+        'user_id'
+    ];
 
     public function offers(){
         return $this->hasMany('App\Models\Offer');

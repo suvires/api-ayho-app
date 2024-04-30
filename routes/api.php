@@ -14,7 +14,7 @@ Route::middleware('api')->group(function () {
         Route::middleware('auth:api')->group(function () {
             Route::post('/signout', [AuthController::class, 'logoutUser'])->name('api.auth.signout');
             Route::post('/refresh', [AuthController::class, 'refreshUser'])->name('api.auth.refresh');
-            Route::get('/me', [AuthController::class, 'meUser'])->name('api.auth.me');
+            Route::get('/user', [AuthController::class, 'meUser'])->name('api.auth.me');
         });
     });
 
@@ -27,7 +27,12 @@ Route::middleware('api')->group(function () {
         Route::get('positions', 'App\Http\Controllers\PositionController@index');
         Route::get('attendances', 'App\Http\Controllers\AttendanceController@index');
 
+        Route::post('offer/create', 'App\Http\Controllers\OfferController@create');
+        Route::post('offer/update/{id}', 'App\Http\Controllers\OfferController@update');
         Route::post('offer/like', 'App\Http\Controllers\OfferController@like');
+        Route::post('offer/delete/{id}', 'App\Http\Controllers\OfferController@delete');
+        Route::post('offer/unpublish', 'App\Http\Controllers\OfferController@unpublish');
+        Route::post('offer/publish', 'App\Http\Controllers\OfferController@publish');
         Route::post('offer/dislike', 'App\Http\Controllers\OfferController@dislike');
         Route::post('offer/undo', 'App\Http\Controllers\OfferController@undo');
         Route::get('get-offers', 'App\Http\Controllers\OfferController@getOffers');
@@ -36,11 +41,13 @@ Route::middleware('api')->group(function () {
         Route::get('get-match/{id}', 'App\Http\Controllers\OfferController@getMatch');
 
         Route::get('offers/mycompany', 'App\Http\Controllers\OfferController@getMyCompanyOffers');
+        Route::get('offer/mycompany/{id}', 'App\Http\Controllers\OfferController@getMyCompanyOffer');
 
-        Route::post('create-company', 'App\Http\Controllers\CompanyController@create');
-        Route::post('create-offer', 'App\Http\Controllers\OfferController@create');
+        Route::post('company/create', 'App\Http\Controllers\CompanyController@create');
+        Route::post('company/update', 'App\Http\Controllers\CompanyController@update');
 
         Route::post('create-profile', 'App\Http\Controllers\AuthController@createProfile');
+        Route::post('update-profile', 'App\Http\Controllers\AuthController@updateProfile');
     });
 });
 

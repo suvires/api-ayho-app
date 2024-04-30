@@ -18,14 +18,9 @@ class CreateOffersTable extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->unsignedInteger('salary');
+            $table->boolean('published')->default(true);
             $table->foreignId('company_id')
                 ->constrained('companies')
-                ->onDelete('cascade');
-            $table->foreignId('schedule_id')
-                ->constrained('schedules')
-                ->onDelete('cascade');
-            $table->foreignId('attendance_id')
-                ->constrained('attendances')
                 ->onDelete('cascade');
             $table->timestamps();
         });

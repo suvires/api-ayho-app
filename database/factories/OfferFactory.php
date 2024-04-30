@@ -23,23 +23,25 @@ class OfferFactory extends Factory
         return [
             'title' => $this->faker->jobTitle,
             'description' => $this->faker->paragraph,
-            'company_id' => Company::inRandomOrder()->first()->id,            
+            'company_id' => Company::inRandomOrder()->first()->id,
             'salary' => $this->faker->numberBetween(12000, 100000),
-            'schedule_id' => Schedule::inRandomOrder()->first()->id,
-            'attendance_id' => Attendance::inRandomOrder()->first()->id,
         ];
     }
-    
+
     public function configure()
     {
-        return $this->afterCreating(function (Offer $offer) {            
-            $skills = Skill::inRandomOrder()->take(rand(3, 7))->pluck('id');          
+        return $this->afterCreating(function (Offer $offer) {
+            $skills = Skill::inRandomOrder()->take(rand(3, 7))->pluck('id');
             $positions = Position::inRandomOrder()->take(rand(1, 2))->pluck('id');
             $places = Place::inRandomOrder()->take(rand(1, 2))->pluck('id');
+            $schedules = Schedule::inRandomOrder()->take(rand(1, 2))->pluck('id');
+            $attendances = Attendance::inRandomOrder()->take(rand(1, 2))->pluck('id');
 
             $offer->skills()->sync($skills);
             $offer->positions()->sync($positions);
             $offer->places()->sync($places);
+            $offer->schedules()->sync($schedules);
+            $offer->attendances()->sync($attendances);
         });
     }
 }
