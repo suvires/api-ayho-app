@@ -49,9 +49,8 @@ class OfferController extends Controller
     public function undo(){
         $user = Auth::user();
         $lastOffer = $user->offers()->latest('id')->first();
-        $lastOffer->load('company', 'skills', 'positions', 'schedule', 'places', 'attendance');
         $user->offers()->detach($lastOffer->id);
-         return response()->json($lastOffer, Response::HTTP_OK);
+         return response()->json(['message' => 'success'], Response::HTTP_OK);
     }
 
     public function dislike(Request $request){
@@ -112,6 +111,7 @@ class OfferController extends Controller
         $matches = OfferUser::where('user_id', $user->id)
                 ->where('liked', true)
                 ->with('offer.company')
+                ->orderBy('id', 'desc')
                 ->get();
 
         return response()->json($matches,  Response::HTTP_OK);
