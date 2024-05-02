@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 
 Route::middleware('api')->group(function () {
+    Route::get('prueba', function () {
+        return 'Hola Mundo!';
+    });
     // Authentication routes for JWT Authentication In Laravel 11
     Route::prefix('auth')->group(function () {
         Route::post('/signin', [AuthController::class, 'loginUser'])->name('api.auth.signin');
