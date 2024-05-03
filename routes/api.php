@@ -38,6 +38,10 @@ Route::middleware('api')->group(function () {
         Route::get('get-offers', 'App\Http\Controllers\OfferController@getOffers');
         Route::get('get-matches', 'App\Http\Controllers\OfferController@getMatches');
 
+        Route::get('chats/user', 'App\Http\Controllers\ChatController@get_user_chats');
+        Route::get('chat/user/{id}', 'App\Http\Controllers\ChatController@get_user_chat_messages');
+        Route::post('chat/send-message/{id}', 'App\Http\Controllers\ChatController@send_message');
+
         Route::get('get-match/{id}', 'App\Http\Controllers\OfferController@getMatch');
 
         Route::get('offers/mycompany', 'App\Http\Controllers\OfferController@getMyCompanyOffers');

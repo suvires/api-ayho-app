@@ -29,6 +29,7 @@ class AuthController extends Controller
         $role = request(['role']);
         $user->load('roles');
         if(!$user->hasRole($role)) {
+            auth()->logout();
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 

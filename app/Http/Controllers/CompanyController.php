@@ -6,7 +6,6 @@ use App\Models\Company;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Response;
-use Intervention\Image\Facades\Image;
 
 class CompanyController extends Controller
 {
